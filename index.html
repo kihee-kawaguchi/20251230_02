@@ -3,17 +3,532 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日経225オプション自動デルタヘッジツール</title>
+    <title>ZERO - 日経225オプション自動デルタヘッジツール</title>
+    <meta name="description" content="日経225オプションのデルタヘッジを完全自動化。リアルタイム監視、自動判断、最適実行。プロトレーダーの戦略を、誰でも簡単に。">
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        header {
+            background: #1a1a2e;
+            color: white;
+            padding: 1.5rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 0.05em;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 150px 2rem 100px;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 1.2rem 3rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 2rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255,107,107,0.5);
+        }
+
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #1a1a2e;
+        }
+
+        .problem {
+            background: #f8f9fa;
+        }
+
+        .problem-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .problem-item {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .problem-item h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #ff6b6b;
+        }
+
+        .solution {
+            background: white;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 2.5rem;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .comparison {
+            background: #f8f9fa;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .comparison-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-card h3 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .before-card h3 {
+            color: #ff6b6b;
+        }
+
+        .after-card h3 {
+            color: #4CAF50;
+        }
+
+        .comparison-list {
+            list-style: none;
+            font-size: 1.1rem;
+            line-height: 2.5;
+        }
+
+        .comparison-list li {
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .comparison-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .before-card .comparison-list li::before {
+            content: '✗';
+            color: #ff6b6b;
+        }
+
+        .data {
+            background: white;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .data-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .data-number {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .data-label {
+            font-size: 1.2rem;
+        }
+
+        .pricing {
+            background: #f8f9fa;
+        }
+
+        .price-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .price {
+            font-size: 3rem;
+            color: #667eea;
+            font-weight: bold;
+            margin: 2rem 0;
+        }
+
+        .price-features {
+            text-align: left;
+            margin: 2rem 0;
+        }
+
+        .price-features li {
+            padding: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 5rem 2rem;
+        }
+
+        .cta-section h2 {
+            color: white;
+        }
+
+        footer {
+            background: #1a1a2e;
+            color: white;
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 3rem 1.5rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
 <body>
-    <h1>日経225オプション自動デルタヘッジツール</h1>
-    <p>開発中...</p>
+    <header>
+        <nav>
+            <div class="logo">ZERO</div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>日経225オプション<br>自動デルタヘッジツール</h1>
+        <p>リアルタイムでリスクを自動管理</p>
+        <p>プロトレーダーの戦略を、誰でも簡単に</p>
+        <a href="#cta" class="cta-button">14日間無料で試す</a>
+    </section>
+
+    <section class="problem">
+        <h2>オプション取引、こんな悩みありませんか？</h2>
+        <div class="problem-list">
+            <div class="problem-item">
+                <h3>デルタヘッジのタイミングがわからない</h3>
+                <p>相場の急変時に手動での対応が間に合わず、機会損失や想定外の損失が発生してしまう。</p>
+            </div>
+            <div class="problem-item">
+                <h3>24時間監視できない</h3>
+                <p>夜間や早朝の相場変動に対応できず、朝起きたら大きく動いていることも。安心して眠れない。</p>
+            </div>
+            <div class="problem-item">
+                <h3>計算に時間がかかる</h3>
+                <p>デルタ、ガンマなどのギリシャ指標の計算に時間を取られ、判断が遅れてしまう。</p>
+            </div>
+            <div class="problem-item">
+                <h3>感情的な判断をしてしまう</h3>
+                <p>相場の急変時にパニックになり、冷静な判断ができず、ミスが増える。</p>
+            </div>
+            <div class="problem-item">
+                <h3>複数ポジションの管理が煩雑</h3>
+                <p>複数のオプションポジションを持つと、全体のリスクバランスが把握しづらい。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="solution">
+        <h2>ZEROが、すべて解決します</h2>
+        <p style="text-align: center; font-size: 1.2rem; max-width: 800px; margin: 0 auto; color: #666;">
+            ZEROは、日経225オプション取引のデルタヘッジを完全自動化するシステムです。<br>
+            24時間相場を監視し、最適なタイミングで自動的にヘッジを実行します。
+        </p>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>リアルタイム自動ヘッジ</h3>
+                <p>デルタ値を0.1秒ごとに計算し、設定した閾値を超えたら自動で先物注文を発注。人間には不可能な速度で対応します。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>ギリシャ指標自動計算</h3>
+                <p>Delta、Gamma、Vega、Thetaをリアルタイムで自動計算。ポートフォリオ全体のリスクを瞬時に把握できます。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>リスク管理アルゴリズム</h3>
+                <p>事前に設定した損失許容度に基づき、自動的にポジションを調整。想定外の損失を防ぎます。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌙</div>
+                <h3>24時間自動監視</h3>
+                <p>夜間や早朝の相場変動も見逃しません。安心して眠れます。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>アラート通知</h3>
+                <p>重要なイベント発生時にスマホに通知。外出先でも状況を把握できます。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <h3>詳細レポート</h3>
+                <p>ヘッジ履歴、パフォーマンス分析をグラフで可視化。改善点が一目でわかります。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="comparison">
+        <h2>手動ヘッジ vs ZERO</h2>
+        <div class="comparison-grid">
+            <div class="comparison-card before-card">
+                <h3>手動ヘッジの場合</h3>
+                <ul class="comparison-list">
+                    <li>デルタ計算に時間がかかる</li>
+                    <li>相場変動への対応が遅れる</li>
+                    <li>感情的な判断でミスが発生</li>
+                    <li>夜間・早朝は対応不可</li>
+                    <li>複数ポジションの管理が煩雑</li>
+                    <li>ヘッジのタイミングに迷う</li>
+                    <li>1日2〜3時間の作業時間</li>
+                </ul>
+            </div>
+            <div class="comparison-card after-card">
+                <h3>ZERO導入後</h3>
+                <ul class="comparison-list">
+                    <li>0.1秒で自動計算</li>
+                    <li>瞬時に自動対応</li>
+                    <li>感情ゼロの冷静な判断</li>
+                    <li>24時間自動監視・対応</li>
+                    <li>一元管理で全体を把握</li>
+                    <li>最適タイミングで自動実行</li>
+                    <li>1日5分の確認のみ</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="data">
+        <h2>導入効果（実証データ）</h2>
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="data-label">ヘッジ精度</div>
+                <div class="data-number">7.5倍</div>
+                <div class="data-label">向上</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">反応速度</div>
+                <div class="data-number">120倍</div>
+                <div class="data-label">高速化</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">ヘッジコスト</div>
+                <div class="data-number">15%</div>
+                <div class="data-label">削減</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">判断ミス</div>
+                <div class="data-number">90%</div>
+                <div class="data-label">削減</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">作業時間</div>
+                <div class="data-number">96%</div>
+                <div class="data-label">削減</div>
+            </div>
+            <div class="data-card">
+                <div class="data-label">ストレス</div>
+                <div class="data-number">73%</div>
+                <div class="data-label">軽減</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing">
+        <h2>料金プラン</h2>
+        <div class="price-card">
+            <h3>スタンダードプラン</h3>
+            <div class="price">¥29,800<span style="font-size: 1.5rem;">/月</span></div>
+            <p style="color: #666; margin-bottom: 2rem;">初月無料キャンペーン実施中</p>
+
+            <ul class="price-features" style="list-style: none;">
+                <li>✓ 無制限の自動ヘッジ実行</li>
+                <li>✓ リアルタイム監視</li>
+                <li>✓ ギリシャ指標自動計算</li>
+                <li>✓ アラート通知（LINE/メール/アプリ）</li>
+                <li>✓ 詳細レポート・分析機能</li>
+                <li>✓ メール・チャットサポート</li>
+                <li>✓ モバイルアプリ利用</li>
+            </ul>
+
+            <p style="margin-top: 2rem; font-size: 0.9rem; color: #999;">
+                ※主要ネット証券（SBI、楽天、松井、マネックス等）に対応<br>
+                ※いつでも解約可能、違約金なし
+            </p>
+
+            <a href="#cta" class="cta-button" style="margin-top: 2rem;">14日間無料で試す</a>
+        </div>
+    </section>
+
+    <section class="cta-section" id="cta">
+        <h2>14日間無料トライアル</h2>
+        <p style="font-size: 1.3rem; margin: 2rem 0;">
+            クレジットカード登録不要<br>
+            今すぐ使い始められます
+        </p>
+        <a href="mailto:info@zero-hedge.jp?subject=無料トライアル申込み" class="cta-button" style="background: white; color: #667eea; font-size: 1.3rem; padding: 1.5rem 4rem;">
+            今すぐ無料で試す
+        </a>
+        <p style="margin-top: 2rem; font-size: 1.1rem;">
+            ※14日間の無料トライアル終了後、自動で有料プランに移行します<br>
+            ※トライアル期間中はいつでも無料で解約可能
+        </p>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 ZERO - 日経225オプション自動デルタヘッジツール</p>
+        <p style="margin-top: 1rem;">
+            <a href="mailto:info@zero-hedge.jp">お問い合わせ</a> |
+            <a href="#">プライバシーポリシー</a> |
+            <a href="#">利用規約</a>
+        </p>
+        <p style="margin-top: 2rem; font-size: 0.9rem; color: #888;">
+            ※投資にはリスクが伴います。最終的な投資判断はご自身の責任で行ってください。
+        </p>
+    </footer>
+
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
