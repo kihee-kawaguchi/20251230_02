@@ -1,0 +1,12 @@
+{
+  "name": "20251230_02",
+  "version": "1.0.0",
+  "description": "日経225オプション自動デルタヘッジツールのランディングページ",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": ["landing-page", "nikkei225", "options", "delta-hedge"],
+  "author": "",
+  "license": "MIT"
+}
