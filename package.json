@@ -6,7 +6,22 @@
   "scripts": {
     "test": "echo \"No tests yet\" && exit 0"
   },
-  "keywords": ["landing-page", "nikkei225", "options", "delta-hedge"],
+  "keywords": [
+    "landing-page",
+    "nikkei225",
+    "options",
+    "delta-hedge"
+  ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.76",
+    "@anthropic-ai/sdk": "^0.71.2",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
 }

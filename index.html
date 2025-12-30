@@ -5,7 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZERO - 日経225オプション自動デルタヘッジツール</title>
     <meta name="description" content="日経225オプションのデルタヘッジを完全自動化。リアルタイム監視、自動判断、最適実行。プロトレーダーの戦略を、誰でも簡単に。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-navy: #1a1f2e;
+            --accent-gold: #c7a17a;
+            --accent-gold-dark: #8b7355;
+            --text-dark: #2c3e50;
+            --text-light: #5a6c7d;
+            --bg-cream: #f8f5f1;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,13 +25,14 @@
         }
 
         body {
-            font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-            line-height: 1.8;
-            color: #333;
+            font-family: 'Noto Serif JP', 'Yu Mincho', 'YuMincho', 'Hiragino Mincho ProN', serif;
+            line-height: 1.9;
+            color: var(--text-dark);
+            letter-spacing: 0.05em;
         }
 
         header {
-            background: #1a1a2e;
+            background: var(--primary-navy);
             color: white;
             padding: 1.5rem 0;
             position: fixed;
@@ -41,63 +54,106 @@
         .logo {
             font-size: 2rem;
             font-weight: bold;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.2em;
+            color: var(--accent-gold);
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
         .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1f2e 0%, #2c3e50 50%, #34495e 100%);
             color: white;
             padding: 150px 2rem 100px;
             text-align: center;
             margin-top: 80px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(199, 161, 122, 0.05) 0%, rgba(139, 115, 85, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .hero > * {
+            position: relative;
+            z-index: 1;
         }
 
         .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 2rem;
-            line-height: 1.4;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            line-height: 1.3;
+            letter-spacing: 0.15em;
         }
 
         .hero p {
-            font-size: 1.4rem;
+            font-size: clamp(1.1rem, 3vw, 1.4rem);
             margin-bottom: 1rem;
             opacity: 0.95;
+            font-family: 'Noto Sans JP', sans-serif;
+            letter-spacing: 0.1em;
         }
 
         .cta-button {
             display: inline-block;
-            background: #ff6b6b;
-            color: white;
-            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
+            color: var(--primary-navy);
+            padding: 1.5rem 4rem;
             text-decoration: none;
-            border-radius: 50px;
+            border-radius: 4px;
             font-size: 1.2rem;
-            font-weight: bold;
-            margin-top: 2rem;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+            font-weight: 700;
+            margin-top: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 8px 20px rgba(199, 161, 122, 0.3),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(199, 161, 122, 0.5);
+            font-family: 'Noto Sans JP', sans-serif;
+            letter-spacing: 0.2em;
         }
 
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255,107,107,0.5);
+            transform: translateY(-2px);
+            box-shadow:
+                0 12px 30px rgba(199, 161, 122, 0.4),
+                0 4px 8px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, #d4b08c 0%, #9d8366 100%);
         }
 
         section {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 5rem 2rem;
+            padding: 8rem 3rem;
         }
 
         h2 {
-            font-size: 2.5rem;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 400;
             text-align: center;
-            margin-bottom: 3rem;
-            color: #1a1a2e;
+            margin-bottom: 5rem;
+            color: var(--primary-navy);
+            letter-spacing: 0.1em;
+        }
+
+        h3 {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        p {
+            color: var(--text-light);
         }
 
         .problem {
-            background: #f8f9fa;
+            background: var(--bg-cream);
         }
 
         .problem-list {
@@ -107,17 +163,22 @@
 
         .problem-item {
             background: white;
-            padding: 2rem;
-            margin-bottom: 1.5rem;
+            padding: 3rem;
+            margin-bottom: 2rem;
             border-radius: 10px;
-            border-left: 4px solid #ff6b6b;
+            border-left: 4px solid var(--accent-gold);
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .problem-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(199, 161, 122, 0.15);
         }
 
         .problem-item h3 {
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            color: #ff6b6b;
+            margin-bottom: 1.2rem;
+            color: var(--primary-navy);
         }
 
         .solution {
@@ -132,30 +193,34 @@
         }
 
         .feature-card {
-            background: #f8f9fa;
-            padding: 2.5rem;
+            background: var(--bg-cream);
+            padding: 3.5rem;
             border-radius: 10px;
             text-align: center;
-            transition: transform 0.3s;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 1px solid rgba(199, 161, 122, 0.1);
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-12px);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 8px 16px rgba(199, 161, 122, 0.15);
+            background: white;
         }
 
         .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #667eea;
+            margin-bottom: 1.2rem;
+            color: var(--primary-navy);
         }
 
         .comparison {
-            background: #f8f9fa;
+            background: var(--bg-cream);
         }
 
         .comparison-grid {
@@ -179,17 +244,19 @@
         }
 
         .before-card h3 {
-            color: #ff6b6b;
+            color: var(--text-dark);
+            opacity: 0.7;
         }
 
         .after-card h3 {
-            color: #4CAF50;
+            color: var(--accent-gold);
         }
 
         .comparison-list {
             list-style: none;
             font-size: 1.1rem;
             line-height: 2.5;
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
         .comparison-list li {
@@ -201,13 +268,14 @@
             content: '✓';
             position: absolute;
             left: 0;
-            color: #4CAF50;
+            color: var(--accent-gold);
             font-weight: bold;
+            font-size: 1.2rem;
         }
 
         .before-card .comparison-list li::before {
             content: '✗';
-            color: #ff6b6b;
+            color: var(--text-light);
         }
 
         .data {
@@ -222,25 +290,47 @@
         }
 
         .data-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-navy) 0%, #2c3e50 100%);
             color: white;
-            padding: 2.5rem;
+            padding: 3rem;
             border-radius: 10px;
             text-align: center;
+            border: 1px solid rgba(199, 161, 122, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(199, 161, 122, 0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .data-card > * {
+            position: relative;
+            z-index: 1;
         }
 
         .data-number {
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: bold;
             margin: 1rem 0;
+            color: var(--accent-gold);
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
         .data-label {
             font-size: 1.2rem;
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
         .pricing {
-            background: #f8f9fa;
+            background: var(--bg-cream);
         }
 
         .price-card {
@@ -254,10 +344,11 @@
         }
 
         .price {
-            font-size: 3rem;
-            color: #667eea;
+            font-size: 3.5rem;
+            color: var(--accent-gold);
             font-weight: bold;
             margin: 2rem 0;
+            font-family: 'Noto Sans JP', sans-serif;
         }
 
         .price-features {
@@ -271,10 +362,27 @@
         }
 
         .cta-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-navy) 0%, #2c3e50 100%);
             color: white;
             text-align: center;
-            padding: 5rem 2rem;
+            padding: 8rem 2rem;
+            position: relative;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(199, 161, 122, 0.05) 0%, rgba(139, 115, 85, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .cta-section > * {
+            position: relative;
+            z-index: 1;
         }
 
         .cta-section h2 {
@@ -282,24 +390,35 @@
         }
 
         footer {
-            background: #1a1a2e;
+            background: var(--primary-navy);
             color: white;
             text-align: center;
-            padding: 3rem 2rem;
+            padding: 4rem 2rem;
         }
 
         footer a {
-            color: #667eea;
+            color: var(--accent-gold);
             text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #d4b08c;
+        }
+
+        @media (max-width: 1024px) {
+            section {
+                padding: 6rem 2rem;
+            }
         }
 
         @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
+            .hero {
+                padding: 120px 1.5rem 80px;
             }
 
-            .hero p {
-                font-size: 1.1rem;
+            .hero h1 {
+                letter-spacing: 0.1em;
             }
 
             .comparison-grid {
@@ -307,7 +426,23 @@
             }
 
             section {
-                padding: 3rem 1.5rem;
+                padding: 4rem 1.5rem;
+            }
+
+            h2 {
+                margin-bottom: 3rem;
+            }
+
+            .cta-button {
+                padding: 1.2rem 2.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-card,
+            .problem-item {
+                padding: 2rem;
             }
         }
 
@@ -317,12 +452,13 @@
     </style>
 </head>
 <body>
-    <header>
-        <nav>
+    <header role="banner">
+        <nav role="navigation" aria-label="メインナビゲーション">
             <div class="logo">ZERO</div>
         </nav>
     </header>
 
+    <main id="main-content">
     <section class="hero">
         <h1>日経225オプション<br>自動デルタヘッジツール</h1>
         <p>リアルタイムでリスクを自動管理</p>
@@ -503,8 +639,9 @@
             ※トライアル期間中はいつでも無料で解約可能
         </p>
     </section>
+    </main>
 
-    <footer>
+    <footer role="contentinfo">
         <p>&copy; 2025 ZERO - 日経225オプション自動デルタヘッジツール</p>
         <p style="margin-top: 1rem;">
             <a href="mailto:info@zero-hedge.jp">お問い合わせ</a> |
